@@ -228,7 +228,7 @@ translations = {
         "bright_contrast": "Contrast value",
         "bright_result": "Brightness–Contrast Result",
         "team_title": "### 👥 Group Members",
-        "team_subtitle": "Group 12 – Roles and contributions",
+        "team_subtitle": "Group 3 – Roles and contributions",
         "team_sid": "Student ID:",
         "team_role": "Role:",
         "team_contribution": "Contribution:",
@@ -326,7 +326,7 @@ translations = {
         "bright_contrast": "Nilai kontras",
         "bright_result": "Hasil Kecerahan–Kontras",
         "team_title": "### 👥 Anggota Kelompok",
-        "team_subtitle": "Kelompok 12 – Peran dan kontribusi",
+        "team_subtitle": "Kelompok 3 – Peran dan kontribusi",
         "team_sid": "NIM:",
         "team_role": "Peran:",
         "team_contribution": "Kontribusi:",
@@ -365,11 +365,11 @@ col_lang1, col_lang2 = st.sidebar.columns(2)
 with col_lang1:
     if st.button("EN", key="lang_en"):
         st.session_state["language"] = "en"
-        st.experimental_rerun()
+        st.rerun()
 with col_lang2:
     if st.button("ID", key="lang_id"):
         st.session_state["language"] = "id"
-        st.experimental_rerun()
+        st.rerun()
 
 # ===================== HELPER FUNCTIONS =====================
 
@@ -534,24 +534,26 @@ elif page == t["nav_proc"]:
             st.write(t["geo_desc"])
             st.markdown("---")
 
-            c1, c2, c3 = st.columns(3)
-            with c1:
+            row1 = st.columns(3)
+            with row1[0]:
                 if st.button(t["btn_translation"], key="btn_trans", type="secondary"):
                     st.session_state["geo_transform"] = "translation"
-            with c2:
+            with row1[1]:
                 if st.button(t["btn_scaling"], key="btn_scale", type="secondary"):
                     st.session_state["geo_transform"] = "scaling"
-            with c3:
+            with row1[2]:
                 if st.button(t["btn_rotation"], key="btn_rot", type="secondary"):
                     st.session_state["geo_transform"] = "rotation"
 
-            c4, c5, _ = st.columns(3)
-            with c4:
+            row2 = st.columns(3)
+            with row2[0]:
                 if st.button(t["btn_shearing"], key="btn_shear", type="secondary"):
                     st.session_state["geo_transform"] = "shearing"
-            with c5:
+            with row2[1]:
                 if st.button(t["btn_reflection"], key="btn_refl", type="secondary"):
                     st.session_state["geo_transform"] = "reflection"
+            with row2[2]:
+                pass
 
         with st.container(border=True):
             if original_img is None:
@@ -928,7 +930,7 @@ elif page == t["nav_team"]:
             "sid": "004202400078",
             "role": "Leader",
             "group": "3",
-            "contrib": "Project Manager and Histogram Modul.",
+            "contrib": "Project Manager, Histogram Module and UI/UX Design.",
             "photo": "images/Keira.jpeg",
         },
         {
@@ -936,7 +938,7 @@ elif page == t["nav_team"]:
             "sid": "004202400065",
             "role": "Member",
             "group": "3",
-            "contrib": "Implemented geometric transforms and filters.",
+            "contrib": "Implemented geometric transforms, Filters and Language Section.",
             "photo": "images/Meilina.jpeg",
         },
         {
@@ -957,8 +959,39 @@ elif page == t["nav_team"]:
         },
     ]
 
-    cols = st.columns(len(team))
-    for col, member in zip(cols, team):
+    row1_cols = st.columns(2)
+    for col, member in zip(row1_cols, team[:2]):
+        with col:
+            st.markdown("#### " + member["name"])
+            if os.path.exists(member["photo"]):
+                img = Image.open(member["photo"]).convert("RGB")
+                w, h = img.size
+                m = min(w, h)
+                left = (w - m) // 2
+                top = (h - m) // 2
+                img = img.crop((left, top, left + m, top + m))
+                img = img.resize((140, 140), Image.Resampling.LANCZOS)
+                st.image(img, use_column_width=False)
+            else:
+                st.markdown(
+                    """
+                    <div class="team-photo-container">
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#ddd; color:#666;">
+                            No Image
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            st.write(f"{t['team_sid']} {member['sid']}")
+            st.write(f"{t['team_role']} {member['role']}")
+            st.write(f"{t['team_group']} {member['group']}")
+            st.write(f"{t['team_contribution']} {member['contrib']}")
+
+    st.markdown("---")
+
+    row2_cols = st.columns(2)
+    for col, member in zip(row2_cols, team[2:]):
         with col:
             st.markdown("#### " + member["name"])
             if os.path.exists(member["photo"]):
